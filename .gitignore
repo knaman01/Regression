@@ -1,10 +1,16 @@
-# Python
+### Python ###
+# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
-*.so
-.Python
+
+# Virtual environments
+.venv/
 env/
+venv/
+ENV/
+
+# Distribution / packaging
 build/
 develop-eggs/
 dist/
@@ -20,18 +26,48 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
-.venv/
 
-# Generated files
+### Project Specific ###
+# Generated reports
 *.html
 model_comparison_*.html
 report_*.html
 
-# IDE
-.idea/
+# Data files
+*.csv
+*.xlsx
+*.json
+
+### IDEs and Editors ###
+# VS Code
 .vscode/
+*.code-workspace
+
+# PyCharm
+.idea/
+*.iml
+*.iws
+
+# Vim
 *.swp
 *.swo
 
-# OS
-.DS_Store 
+### OS Generated Files ###
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+### Logs and Databases ###
+*.log
+*.sqlite 
+
+# Output directory
+output/ 

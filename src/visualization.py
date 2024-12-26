@@ -3,6 +3,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 from sklearn.metrics import confusion_matrix, roc_curve, auc, classification_report
 from datetime import datetime
+import os
 
 def plot_feature_importance(model, feature_names):
     importance = pd.DataFrame({
@@ -20,7 +21,15 @@ def plot_feature_importance(model, feature_names):
     return fig
 
 def generate_report(models_results, feature_names, y_test):
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    # Create output directory if it doesn't exist
+    output_dir = "output"
+    os.makedirs(output_dir, exist_ok=True)
+    
+    # Format timestamp in a more readable way
+    timestamp = datetime.now().strftime("%B_%d_%Y_%I%M%p").lower()
+    
+    # Create a more readable filename in the output directory
+    filename = os.path.join(output_dir, f"model_comparison_{timestamp}.html")
     
     # Create comparison table data
     comparison_data = {
@@ -51,7 +60,6 @@ def generate_report(models_results, feature_names, y_test):
             comparison_data['AUC-ROC'].append(None)
     
     # Generate HTML report
-    filename = f"model_comparison_{timestamp}.html"
     generate_html_report(comparison_data, models_results, y_test, filename)
     
     return filename

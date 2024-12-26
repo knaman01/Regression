@@ -6,9 +6,13 @@ def load_data():
     columns = ['age', 'sex', 'cp', 'trestbps', 'chol', 'fbs', 'restecg', 
                'thalach', 'exang', 'oldpeak', 'slope', 'ca', 'thal', 'target']
     
-    url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/heart-disease/processed.cleveland.data'
-    df = pd.read_csv(url, names=columns, na_values='?')
+    # Load from local CSV file instead of URL
+    df = pd.read_csv('heart.csv', names=columns, na_values=['?'])
+    
+    # Drop rows with missing values
     df = df.dropna()
+    
+    # Convert target to binary (0 or 1)
     df['target'] = df['target'].map(lambda x: 1 if x > 0 else 0)
     return df
 

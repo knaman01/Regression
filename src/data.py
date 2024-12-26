@@ -1,6 +1,6 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
+from .feature_engineering import prepare_features
 
 def load_data():
     columns = ['age', 'sex', 'cp', 'trestbps', 'chol', 'fbs', 'restecg', 
@@ -13,10 +13,8 @@ def load_data():
     return df
 
 def prepare_data(df, test_size=0.3):
-    X = df.drop('target', axis=1)
-    y = df['target']
+    # Get engineered features
+    X_scaled, y, feature_names = prepare_features(df)
     
-    scaler = StandardScaler()
-    X_scaled = scaler.fit_transform(X)
-    
-    return train_test_split(X_scaled, y, test_size=test_size, random_state=42), X.columns 
+    # Split data
+    return train_test_split(X_scaled, y, test_size=test_size, random_state=42), feature_names 

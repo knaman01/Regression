@@ -2,6 +2,9 @@ from src.data import load_data, prepare_data
 from src.model import LogisticRegression, compare_models
 from src.visualization import generate_report
 from sklearn.metrics import accuracy_score, classification_report
+import os
+
+os.environ['ENABLE_FEATURE_ENGINEERING'] = 'True'  # or 'False'
 
 def main():
     # Load data

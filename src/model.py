@@ -1,10 +1,4 @@
 import numpy as np
-from sklearn.base import BaseEstimator
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
-from sklearn.svm import SVC
-from sklearn.neural_network import MLPClassifier
-from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score
 
 class LogisticRegression:
@@ -42,36 +36,3 @@ class LogisticRegression:
         probabilities = self.sigmoid(linear_model)
         # Return 2D array with shape (n_samples, 2)
         return np.vstack([1 - probabilities, probabilities]).T 
-
-def get_models():
-    models = {
-        'Logistic Regression': LogisticRegression(learning_rate=0.01, n_iterations=1000),
-        'Decision Tree': DecisionTreeClassifier(random_state=42),
-        'Random Forest': RandomForestClassifier(n_estimators=100, random_state=42),
-        'Gradient Boosting': GradientBoostingClassifier(random_state=42),
-        'SVM': SVC(kernel='rbf', probability=True, random_state=42),
-        'Neural Network': MLPClassifier(hidden_layer_sizes=(100, 50), max_iter=1000, random_state=42),
-        'KNN': KNeighborsClassifier(n_neighbors=5)
-    }
-    return models
-
-def compare_models(X_train, X_test, y_train, y_test):
-    models = get_models()
-    results = {}
-    
-    for name, model in models.items():
-        # Train model
-        model.fit(X_train, y_train)
-        
-        # Make predictions
-        y_pred = model.predict(X_test)
-        y_prob = model.predict_proba(X_test)[:, 1] if hasattr(model, 'predict_proba') else None
-        
-        # Calculate metrics
-        results[name] = {
-            'accuracy': accuracy_score(y_test, y_pred),
-            'predictions': y_pred,
-            'probabilities': y_prob
-        }
-    
-    return results 

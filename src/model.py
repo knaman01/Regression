@@ -5,7 +5,7 @@ from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.svm import SVC
 from sklearn.neural_network import MLPClassifier
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, classification_report
 
 class LogisticRegression:
     def __init__(self, learning_rate=0.01, n_iterations=1000):
@@ -59,7 +59,13 @@ def compare_models(X_train, X_test, y_train, y_test):
     models = get_models()
     results = {}
     
+    print("\n=== Model Performance Metrics by Class ===")
+    print("=" * 50)
+    
     for name, model in models.items():
+        print(f"\n{name}:")
+        print("-" * 30)
+        
         # Train model
         model.fit(X_train, y_train)
         
@@ -67,11 +73,48 @@ def compare_models(X_train, X_test, y_train, y_test):
         y_pred = model.predict(X_test)
         y_prob = model.predict_proba(X_test)[:, 1] if hasattr(model, 'predict_proba') else None
         
-        # Calculate metrics
+        # Get classification report
+        report = classification_report(y_test, y_pred, output_dict=True)
+        
+        # Print metrics for each class
+        print("Class 0 (No Heart Disease):")
+        print(f"Precision:    {report['0']['precision']:.4f} ({int(report['0']['precision'] * 100)}%)")
+        print(f"Recall:       {report['0']['recall']:.4f} ({int(report['0']['recall'] * 100)}%)")
+        print(f"F1-Score:     {report['0']['f1-score']:.4f}")
+        
+        print("\nClass 1 (Heart Disease):")
+        print(f"Precision:    {report['1']['precision']:.4f} ({int(report['1']['precision'] * 100)}%)")
+        print(f"Recall:       {report['1']['recall']:.4f} ({int(report['1']['recall'] * 100)}%)")
+        print(f"F1-Score:     {report['1']['f1-score']:.4f}")
+        
+        # Calculate and print confusion matrix numbers
+        true_negatives = sum((y_test == 0) & (y_pred == 0))
+        false_positives = sum((y_test == 0) & (y_pred == 1))
+        false_negatives = sum((y_test == 1) & (y_pred == 0))
+        true_positives = sum((y_test == 1) & (y_pred == 1))
+        
+        print("\nDetailed Numbers:")
+        print("No Heart Disease (Class 0):")
+        print(f"Total Cases:           {sum(y_test == 0)}")
+        print(f"Correctly Identified:  {true_negatives}")
+        print(f"Incorrectly Flagged:  {false_positives}")
+        
+        print("\nHeart Disease (Class 1):")
+        print(f"Total Cases:           {sum(y_test == 1)}")
+        print(f"Correctly Identified:  {true_positives}")
+        print(f"Missed Cases:          {false_negatives}")
+        
+        # Store results
         results[name] = {
-            'accuracy': accuracy_score(y_test, y_pred),
             'predictions': y_pred,
-            'probabilities': y_prob
+            'probabilities': y_prob,
+            'metrics': report,
+            'raw_numbers': {
+                'true_positives': true_positives,
+                'true_negatives': true_negatives,
+                'false_positives': false_positives,
+                'false_negatives': false_negatives
+            }
         }
     
     return results 

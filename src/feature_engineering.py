@@ -4,7 +4,7 @@ from sklearn.preprocessing import StandardScaler
 
 class FeatureEngineeringConfig:
     """Configuration for feature engineering"""
-    ENABLE = True  # Master switch for all feature engineering
+    ENABLE = False  # Master switch for all feature engineering
     
     # Individual feature flags
     AGE_FEATURES = True      # Age-related features

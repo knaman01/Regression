@@ -7,6 +7,7 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score, classification_report
 import json
+from sklearn.model_selection import cross_val_score, StratifiedKFold
 
 class LogisticRegression:
     def __init__(self, learning_rate=0.01, n_iterations=1000):
@@ -14,6 +15,14 @@ class LogisticRegression:
         self.n_iterations = n_iterations
         self.weights = None
         self.bias = None
+    
+    def get_params(self, deep=True):
+        return {"learning_rate": self.learning_rate, "n_iterations": self.n_iterations}
+    
+    def set_params(self, **params):
+        for key, value in params.items():
+            setattr(self, key, value)
+        return self
     
     def sigmoid(self, z):
         return 1 / (1 + np.exp(-z))
@@ -41,17 +50,16 @@ class LogisticRegression:
     def predict_proba(self, X):
         linear_model = np.dot(X, self.weights) + self.bias
         probabilities = self.sigmoid(linear_model)
-        # Return 2D array with shape (n_samples, 2)
         return np.vstack([1 - probabilities, probabilities]).T 
 
 def get_models():
     models = {
         'Logistic Regression': LogisticRegression(learning_rate=0.01, n_iterations=1000),
-        'Decision Tree': DecisionTreeClassifier(random_state=42),
+        # 'Decision Tree': DecisionTreeClassifier(random_state=42),
         'Random Forest': RandomForestClassifier(n_estimators=100, random_state=42),
-        'Gradient Boosting': GradientBoostingClassifier(random_state=42),
-        'SVM': SVC(kernel='rbf', probability=True, random_state=42),
-        'Neural Network': MLPClassifier(hidden_layer_sizes=(100, 50), max_iter=1000, random_state=42),
+        # 'Gradient Boosting': GradientBoostingClassifier(random_state=42),
+        # 'SVM': SVC(kernel='rbf', probability=True, random_state=42),
+        # 'Neural Network': MLPClassifier(hidden_layer_sizes=(100, 50), max_iter=1000, random_state=42),
         'KNN': KNeighborsClassifier(n_neighbors=5)
     }
     return models
@@ -70,12 +78,18 @@ def compare_models(X_train, X_test, y_train, y_test):
     except FileNotFoundError:
         best_thresholds = {model_name: 0.5 for model_name in get_models().keys()}
     
+
+    cv_results = evaluate_models_with_cv(X_train, y_train) 
+    print(cv_results)
+        
+
     for name, model in models.items():
         print(f"\n{name}:")
         print("-" * 30)
         
         # Train model
         model.fit(X_train, y_train)
+        
         
         # Make predictions using custom threshold
         y_prob = model.predict_proba(X_test)[:, 1] if hasattr(model, 'predict_proba') else None
@@ -129,3 +143,22 @@ def compare_models(X_train, X_test, y_train, y_test):
         }
     
     return results 
+
+def evaluate_models_with_cv(X, y):
+    models = get_models()
+    cv_results = {}
+
+    # Define cross-validation strategy
+    cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+
+    for name, model in models.items():
+        print(f"\nEvaluating {name} with cross-validation:")
+        scores = cross_val_score(model, X, y, cv=cv, scoring='f1')
+        cv_results[name] = scores
+        print(f"F1 Score: {np.mean(scores):.4f} ± {np.std(scores):.4f}")
+
+    return cv_results
+
+# Example usage
+# Assuming X and y are your features and target
+# cv_results = evaluate_models_with_cv(X, y) 

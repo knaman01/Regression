@@ -1,5 +1,5 @@
 import plotly.graph_objects as go
-from sklearn.metrics import roc_curve, auc
+from sklearn.metrics import roc_curve, auc, classification_report
 
 def create_confusion_matrix_plot(cm):
     fig = go.Figure(data=go.Heatmap(
@@ -47,3 +47,15 @@ def create_roc_curve(fpr, tpr, roc_auc):
         yaxis_title='True Positive Rate'
     )
     return fig
+
+def find_best_threshold(y_true, y_prob, max_fpr=0.2):
+    """Find the best threshold where FPR is less than max_fpr."""
+    fpr, tpr, thresholds = roc_curve(y_true, y_prob)
+    best_threshold = None
+    for i, f in enumerate(fpr):
+        if f < max_fpr:
+            best_threshold = thresholds[i]
+        else:
+            break
+    return best_threshold
+

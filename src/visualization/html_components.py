@@ -15,6 +15,7 @@ def create_comparison_table(comparison_data):
                         <th>Recall</th>
                         <th>F1 Score</th>
                         <th>AUC-ROC</th>
+                        <th>Best Threshold</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -29,6 +30,7 @@ def create_comparison_table(comparison_data):
                 <td>{comparison_data['Recall'][i]:.2%}</td>
                 <td>{comparison_data['F1 Score'][i]:.2%}</td>
                 <td>{'N/A' if comparison_data['AUC-ROC'][i] is None else f"{comparison_data['AUC-ROC'][i]:.3f}"}</td>
+                <td>{'N/A' if comparison_data['Best Threshold'][i] is None else f"{comparison_data['Best Threshold'][i]:.3f}"}</td>
             </tr>
         """
     

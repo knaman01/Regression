@@ -6,6 +6,7 @@ from sklearn.svm import SVC
 from sklearn.neural_network import MLPClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score, classification_report
+import json
 
 class LogisticRegression:
     def __init__(self, learning_rate=0.01, n_iterations=1000):
@@ -62,6 +63,13 @@ def compare_models(X_train, X_test, y_train, y_test):
     print("\n=== Model Performance Metrics by Class ===")
     print("=" * 50)
     
+    # Load best thresholds
+    try:
+        with open('output/best_thresholds.json', 'r') as f:
+            best_thresholds = json.load(f)
+    except FileNotFoundError:
+        best_thresholds = {model_name: 0.5 for model_name in get_models().keys()}
+    
     for name, model in models.items():
         print(f"\n{name}:")
         print("-" * 30)
@@ -69,9 +77,12 @@ def compare_models(X_train, X_test, y_train, y_test):
         # Train model
         model.fit(X_train, y_train)
         
-        # Make predictions
-        y_pred = model.predict(X_test)
+        # Make predictions using custom threshold
         y_prob = model.predict_proba(X_test)[:, 1] if hasattr(model, 'predict_proba') else None
+        threshold = best_thresholds.get(name, 0.5)  # Default to 0.5 if not found
+        print (threshold)
+
+        y_pred = (y_prob >= threshold).astype(int) if y_prob is not None else model.predict(X_test)
         
         # Get classification report
         report = classification_report(y_test, y_pred, output_dict=True)

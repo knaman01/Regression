@@ -64,7 +64,7 @@ def get_models():
         'Logistic Regression': LogisticRegression(learning_rate=0.01, n_iterations=1000),
         # 'Decision Tree': DecisionTreeClassifier(random_state=42),
         'Random Forest': RandomForestClassifier(n_estimators=100, random_state=42),
-        # 'Gradient Boosting': GradientBoostingClassifier(random_state=42),
+        'Gradient Boosting': GradientBoostingClassifier(random_state=42),
         # 'SVM': SVC(kernel='rbf', probability=True, random_state=42),
         # 'Neural Network': MLPClassifier(hidden_layer_sizes=(100, 50), max_iter=1000, random_state=42),
         # 'KNN': KNeighborsClassifier(n_neighbors=5)

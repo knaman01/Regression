@@ -8,6 +8,13 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score, classification_report
 import json
 from sklearn.model_selection import cross_val_score, StratifiedKFold
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+from src.data import load_data
+from scipy.stats import chi2_contingency
+from sklearn.metrics import mutual_info_score
+from dython.nominal import associations
 
 class LogisticRegression:
     def __init__(self, learning_rate=0.01, n_iterations=1000):
@@ -60,7 +67,7 @@ def get_models():
         # 'Gradient Boosting': GradientBoostingClassifier(random_state=42),
         # 'SVM': SVC(kernel='rbf', probability=True, random_state=42),
         # 'Neural Network': MLPClassifier(hidden_layer_sizes=(100, 50), max_iter=1000, random_state=42),
-        'KNN': KNeighborsClassifier(n_neighbors=5)
+        # 'KNN': KNeighborsClassifier(n_neighbors=5)
     }
     return models
 
@@ -159,6 +166,3 @@ def evaluate_models_with_cv(X, y):
 
     return cv_results
 
-# Example usage
-# Assuming X and y are your features and target
-# cv_results = evaluate_models_with_cv(X, y) 

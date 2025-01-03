@@ -2,7 +2,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from .feature_engineering import prepare_features
 
-def load_data(sex_filter=0, age_filter=None):
+def load_data(sex_filter=None, age_filter=None):
     columns = ['age', 'sex', 'cp', 'trestbps', 'chol', 'fbs', 'restecg', 
                'thalach', 'exang', 'oldpeak', 'slope', 'ca', 'thal', 'target']
     

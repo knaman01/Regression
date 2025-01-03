@@ -1,6 +1,6 @@
 from datetime import datetime
-from sklearn.metrics import confusion_matrix, roc_curve, auc
-from .plot_components import create_confusion_matrix_plot, create_roc_curve
+from sklearn.metrics import confusion_matrix, roc_curve, auc, precision_recall_curve, average_precision_score
+from .plot_components import create_confusion_matrix_plot, create_roc_curve, create_precision_recall_curve
 
 def create_comparison_table(comparison_data):
     table_html = """
@@ -50,18 +50,20 @@ def create_model_sections(models_results, y_test):
         cm = confusion_matrix(y_test, y_pred)
         fig_cm = create_confusion_matrix_plot(cm)
         
-        # Create ROC button HTML separately to avoid f-string backslash issues
+        # Create ROC and PR curve buttons HTML separately
         roc_button = ''
+        pr_button = ''
         if y_prob is not None:
             roc_button = f'<button class="tab-button" onclick="openTab(event, \'{name}-roc\', \'{name}\')">ROC Curve</button>'
+            pr_button = f'<button class="tab-button" onclick="openTab(event, \'{name}-pr\', \'{name}\')">Precision-Recall Curve</button>'
         
-        # Create tabs for each model
         sections_html += f"""
             <div class="model-section" id="{name}">
                 <h2>{name}</h2>
                 <div class="tabs">
                     <button class="tab-button active" onclick="openTab(event, '{name}-confusion', '{name}')">Confusion Matrix</button>
                     {roc_button}
+                    {pr_button}
                 </div>
                 
                 <div id="{name}-confusion" class="tab-content active">
@@ -72,13 +74,25 @@ def create_model_sections(models_results, y_test):
         """
         
         if y_prob is not None:
-            fpr, tpr, _ = roc_curve(y_test, y_prob)
+            # ROC curve
+            fpr, tpr, roc_thresholds = roc_curve(y_test, y_prob)
             roc_auc = auc(fpr, tpr)
-            fig_roc = create_roc_curve(fpr, tpr, roc_auc)
+            fig_roc = create_roc_curve(fpr, tpr, roc_thresholds, roc_auc)
+            
+            # Precision-Recall curve
+            precision, recall, pr_thresholds = precision_recall_curve(y_test, y_prob)
+            avg_precision = average_precision_score(y_test, y_prob)
+            fig_pr = create_precision_recall_curve(precision, recall, pr_thresholds, avg_precision)
+            
             sections_html += f"""
                 <div id="{name}-roc" class="tab-content">
                     <div class="plot-container">
                         {fig_roc.to_html(full_html=False, include_plotlyjs='cdn')}
+                    </div>
+                </div>
+                <div id="{name}-pr" class="tab-content">
+                    <div class="plot-container">
+                        {fig_pr.to_html(full_html=False, include_plotlyjs='cdn')}
                     </div>
                 </div>
             """
@@ -176,6 +190,10 @@ def create_html_content(comparison_data, models_results, y_test):
             }}
             .tab-content.active {{
                 display: block;
+                padding-bottom: 0;
+            }}
+            .plot-container {{
+                margin-bottom: 0;
             }}
         </style>
         <script>

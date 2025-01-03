@@ -1,0 +1,11 @@
+Todo:
+- Validate the feature correlation
+- Validate the feature importance
+- Validate the feature distribution
+- Validate the feature engineering
+- Validate the model performance
+- Validate the model comparison
+- Validate the model threshold
+- Validate the model prediction
+- Validate the model evaluation
+- Validate the model visualization

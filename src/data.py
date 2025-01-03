@@ -2,7 +2,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from .feature_engineering import prepare_features
 
-def load_data(sex_filter=None, age_filter=None):
+def load_data(sex_filter=None, age_filter='30_60'):
     columns = ['age', 'sex', 'cp', 'trestbps', 'chol', 'fbs', 'restecg', 
                'thalach', 'exang', 'oldpeak', 'slope', 'ca', 'thal', 'target']
     
@@ -23,12 +23,8 @@ def load_data(sex_filter=None, age_filter=None):
     if age_filter is not None:
         age_brackets = {
             'under_30': (0, 30),
-            '30s': (30, 40),
-            '40s': (40, 50),
-            '50s': (50, 60),
-            '60s': (60, 70),
-            '70s': (70, 80),
-            '80_and_above': (80, 120)
+            '30_60': (30, 60),
+            '60_and_above': (60, 120)
         }
         if age_filter in age_brackets:
             min_age, max_age = age_brackets[age_filter]

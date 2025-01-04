@@ -194,6 +194,7 @@ def create_html_content(comparison_data, models_results, y_test):
             }}
             .plot-container {{
                 margin-bottom: 0;
+                height: 400px
             }}
         </style>
         <script>
